@@ -1,0 +1,121 @@
+
+================================================================================
+                         EXECUTIVE SUMMARY
+        Factory-to-Customer Shipping Route Efficiency Analysis
+                      Nassau Candy Distributor
+================================================================================
+
+Prepared for : Senior Management & Government Stakeholders
+Date         : 2025
+Dataset      : 10,194 Orders | Jan 2024 — Dec 2025
+Prepared by  : Data Analytics Team
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PURPOSE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Nassau Candy Distributor commissioned this analysis to identify which
+factory-to-customer shipping routes are performing well, which are
+underperforming, and where immediate action is needed to improve
+delivery reliability across the United States and Canada.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WHAT WE ANALYSED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ✦ 10,194 customer orders across 2 years
+  ✦ 5 manufacturing factories across the US
+  ✦ 196 unique factory-to-state shipping routes
+  ✦ 59 states and provinces served
+  ✦ 4 shipping modes analysed
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+THE NUMBERS THAT MATTER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metric                        Value
+  ──────────────────────────    ──────────────
+  Total Orders Analysed         10,194
+  Average Shipping Lead Time    177.96 days
+  Total Delayed Shipments       1,864 (18.29%)
+  On-Time Shipments             8,330 (81.71%)
+  Total Revenue                 $141,784
+  Total Gross Profit            ~$97,000
+  Most Efficient Route          Wicked Choccy's → Louisiana
+  Most Delayed Route            Lot's O' Nuts → Nevada (41.67%)
+  Best Performing State         Ohio (469 orders, consistently fast)
+  Worst Performing State        Newfoundland & Labrador (181.67 days)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3 MOST CRITICAL FINDINGS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │ FINDING 1 — Standard Class Shipping is Broken                       │
+  │                                                                     │
+  │ 100% of all delayed shipments come from Standard Class shipping.    │
+  │ First Class, Same Day, and Second Class show near-zero delay rates. │
+  │ Standard Class delay rate = 30.34% vs network average of 18.29%    │
+  └─────────────────────────────────────────────────────────────────────┘
+
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │ FINDING 2 — Nevada is a Network-Wide Bottleneck                     │
+  │                                                                     │
+  │ Nevada shows poor performance from BOTH major factories.            │
+  │ Lot's O' Nuts → Nevada : 41.67% delay rate (worst in network)      │
+  │ Wicked Choccy's → Nevada : ranked 91st out of 96 routes            │
+  └─────────────────────────────────────────────────────────────────────┘
+
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │ FINDING 3 — Business is Dangerously Concentrated                    │
+  │                                                                     │
+  │ 92.9% of revenue comes from Chocolate products alone.              │
+  │ 55.8% of all orders come from just one factory (Lot's O' Nuts)     │
+  │ California accounts for nearly 20% of all orders nationally        │
+  └─────────────────────────────────────────────────────────────────────┘
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TOP 3 IMMEDIATE ACTIONS RECOMMENDED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ACTION 1 — CRITICAL (Do This First)
+  Audit and renegotiate Standard Class carrier contracts immediately.
+  This single action has the potential to reduce the overall network
+  delay rate from 18.29% to below 5%.
+
+  ACTION 2 — HIGH PRIORITY
+  Investigate Nevada delivery infrastructure. Both factories perform
+  poorly to Nevada. A regional distribution partner or alternative
+  carrier for Nevada should be evaluated within 30 days.
+
+  ACTION 3 — HIGH PRIORITY
+  Upgrade top 10 most delay-prone routes from Standard Class to
+  Second Class shipping. Second Class has only 0.35% delay rate
+  compared to Standard Class at 30.34%.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WHAT SUCCESS LOOKS LIKE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  If the recommendations in this report are implemented:
+
+  Current State          →    Target State
+  ─────────────────────       ─────────────────────
+  18.29% delay rate      →    Below 5% delay rate
+  Nevada 41.67% delays   →    Below 10% delay rate
+  Reactive logistics     →    Data-driven decisions
+  No route visibility    →    Live Streamlit dashboard
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TOOLS DELIVERED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ✦ Full Research Paper with detailed EDA and methodology
+  ✦ Interactive Streamlit Dashboard (live, filterable)
+  ✦ Clean processed dataset (10,194 records, 24 columns)
+  ✦ 22 data visualizations covering all KPIs
+  ✦ This Executive Summary
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                    END OF EXECUTIVE SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -1,0 +1,442 @@
+
+================================================================================
+        FACTORY-TO-CUSTOMER SHIPPING ROUTE EFFICIENCY ANALYSIS
+                    Nassau Candy Distributor
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. EXECUTIVE SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This report presents a comprehensive analysis of shipping route efficiency for
+Nassau Candy Distributor, a national distributor operating across multiple US
+regions and Canadian provinces. Using a dataset of 10,194 orders spanning
+January 2024 to December 2025, this study examines factory-to-customer shipping
+performance across 196 unique routes, 59 states/provinces, and 5 manufacturing
+facilities.
+
+Key Findings:
+  • Overall delay rate stands at 18.29% — driven entirely by Standard Class
+    shipping (30.34% delay rate)
+  • First Class and Same Day shipping modes show 0% delay rates
+  • Chocolate division accounts for 92.9% of total revenue ($141,784)
+  • Pacific and Atlantic regions dominate order volume (62% combined)
+  • Lot's O' Nuts → Nevada is the most delay-prone route (41.67% delay rate)
+  • Wicked Choccy's → Louisiana is the most efficient route (Score: 82.78)
+  • Newfoundland and Labrador has the highest average lead time (181.67 days)
+  • Ohio is the highest volume state with consistently fast delivery
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. INTRODUCTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+2.1 Background
+Nassau Candy Distributor operates as a national distributor shipping confectionery
+products from 5 manufacturing facilities to customers across the United States
+and Canada. With a diverse product portfolio spanning Chocolate, Sugar, and Other
+divisions, the company manages a complex logistics network involving multiple
+shipping modes and hundreds of unique factory-to-customer routes.
+
+2.2 Problem Statement
+Despite having rich order and shipment data, Nassau Candy Distributor lacked
+clarity on:
+  • Which factory-to-customer routes are consistently efficient
+  • Which routes experience frequent delays
+  • How shipping performance varies by region, state, and ship mode
+  • Where operational bottlenecks exist geographically
+
+Without this visibility, logistics optimization remained reactive rather than
+data-driven, leading to increased operational costs and reduced customer
+satisfaction.
+
+2.3 Objectives
+This analysis aims to:
+  1. Calculate and benchmark shipping lead times across all routes
+  2. Identify top 10 most and least efficient routes
+  3. Analyze delay frequency by route, region, and ship mode
+  4. Map geographic shipping bottlenecks across the US
+  5. Provide actionable recommendations for logistics optimization
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. DATASET DESCRIPTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+3.1 Dataset Overview
+  • Source        : Nassau Candy Distributor internal order data
+  • Total Records : 10,194 orders
+  • Time Period   : January 2024 — December 2025
+  • Total Columns : 24 (18 original + 6 engineered)
+  • Missing Values: 0 (complete dataset)
+
+3.2 Key Fields
+  Field               Description
+  ─────────────────   ──────────────────────────────────────────────
+  Order ID            Unique order identifier
+  Order Date          Date order was placed
+  Ship Date           Date order was shipped
+  Ship Mode           Shipping method (First Class, Same Day, etc.)
+  State/Province      Customer delivery location
+  Region              Customer region (Pacific, Atlantic, etc.)
+  Product Name        Name of candy product ordered
+  Sales               Total sales value of order
+  Gross Profit        Sales minus cost of goods
+  Lead Time (Days)    Engineered: Ship Date minus Order Date
+  Factory             Engineered: Manufacturing source of product
+  Route (State)       Engineered: Factory to customer state path
+  Is_Delayed          Engineered: Whether order exceeded 75th percentile
+
+3.3 Factory-Product Mapping
+  Factory               Location      Products
+  ─────────────────────  ────────────  ──────────────────────────────────────
+  Lot's O' Nuts          Arizona       Wonka Bar (Nutty Crunch, Fudge Mallows,
+                                       Scrumdiddlyumptious)
+  Wicked Choccy's        Georgia       Wonka Bar (Milk Chocolate,
+                                       Triple Dazzle Caramel)
+  Sugar Shack            Minnesota     Laffy Taffy, SweeTARTS, Nerds,
+                                       Fun Dip, Fizzy Lifting Drinks
+  Secret Factory         Illinois      Everlasting Gobstopper,
+                                       Lickable Wallpaper, Wonka Gum
+  The Other Factory      Tennessee     Hair Toffee, Kazookles
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. METHODOLOGY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+4.1 Data Cleaning & Validation
+  • Date columns converted from string to datetime format
+  • Ship date anomalies detected and corrected (systematic year offset)
+  • Invalid lead times (zero or negative) removed
+  • Zero missing values confirmed across all fields
+
+4.2 Feature Engineering
+  The following features were engineered from raw data:
+
+  a) Shipping Lead Time
+     Lead Time (Days) = Ship Date − Order Date
+
+  b) Factory Assignment
+     Each product mapped to its manufacturing facility based on
+     the official product-factory correlation table
+
+  c) Route Labels
+     Route (State)  = Factory + " → " + Customer State
+     Route (Region) = Factory + " → " + Customer Region
+
+  d) Delay Flag
+     Threshold = 75th percentile of lead time distribution (179 days)
+     Is_Delayed = True if Lead Time > Threshold
+
+4.3 Route Efficiency Scoring
+  A composite Route Efficiency Score was developed using two components:
+
+  Component 1 — Normalized Average Lead Time (weight: 70%)
+    LT_Score = 1 - ((Avg_LT - Min_LT) / (Max_LT - Min_LT))
+
+  Component 2 — Normalized Lead Time Variability (weight: 30%)
+    Std_Score = 1 - ((Std_LT - Min_Std) / (Max_Std - Min_Std))
+
+  Final Score = (0.7 × LT_Score + 0.3 × Std_Score) × 100
+
+  Score Range: 0 (least efficient) to 100 (most efficient)
+  Minimum threshold: Routes with fewer than 10 orders excluded
+  Final routes analyzed: 96 routes
+
+4.4 Delay Frequency Analysis
+  Delay threshold set at the 75th percentile (179 days) following
+  standard logistics benchmarking practice. Routes with delay rates
+  exceeding 30% flagged as critical bottlenecks.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. EXPLORATORY DATA ANALYSIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+5.1 Lead Time Distribution
+  Metric                Value
+  ────────────────────  ──────────
+  Minimum Lead Time     173 days
+  Maximum Lead Time     185 days
+  Mean Lead Time        177.96 days
+  Std Deviation         1.76 days
+  25th Percentile       177 days
+  75th Percentile       179 days
+
+  The lead time distribution is tightly clustered around 178 days,
+  indicating a relatively consistent but lengthy shipping cycle across
+  the network. The narrow standard deviation (1.76 days) suggests that
+  most variability occurs at the route level rather than network-wide.
+
+5.2 Factory Order Distribution
+  Factory               Orders    Share
+  ─────────────────────  ────────  ──────
+  Lot's O' Nuts          5,692     55.8%
+  Wicked Choccy's        4,152     40.7%
+  Secret Factory         217        2.1%
+  The Other Factory      100        1.0%
+  Sugar Shack            33         0.3%
+
+  Chocolate factories (Lot's O' Nuts and Wicked Choccy's) account for
+  96.5% of all orders, reflecting the dominance of Wonka Bar products
+  in Nassau Candy's portfolio.
+
+5.3 Regional Order Distribution
+  Region        Orders    Share
+  ────────────  ────────  ──────
+  Pacific       3,253     31.9%
+  Atlantic      2,986     29.3%
+  Interior      2,335     22.9%
+  Gulf          1,620     15.9%
+
+  Pacific and Atlantic regions together account for 61.2% of all orders,
+  confirming strong coastal market presence. California, New York, and
+  Texas are the three highest-volume states.
+
+5.4 Sales by Division
+  Division      Revenue     Share
+  ────────────  ──────────  ──────
+  Chocolate     $131,717    92.9%
+  Other         $9,645       6.8%
+  Sugar         $422         0.3%
+
+  The extreme revenue concentration in Chocolate (92.9%) creates business
+  risk if chocolate demand declines. Sugar division, despite having the
+  most product variety, contributes only 0.3% of revenue.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. ROUTE EFFICIENCY ANALYSIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+6.1 Top 10 Most Efficient Routes
+  Rank  Route                              Score   Avg LT  Orders
+  ────  ─────────────────────────────────  ──────  ──────  ──────
+  1     Wicked Choccy's → Louisiana        82.78   176.87  15
+  2     Lot's O' Nuts → Ontario            77.23   177.14  28
+  3     Secret Factory → Illinois          75.24   177.00  13
+  4     Wicked Choccy's → Manitoba         68.13   177.60  10
+  5     Lot's O' Nuts → New Hampshire      67.41   177.31  13
+  6     Lot's O' Nuts → Louisiana          65.87   177.21  24
+  7     Lot's O' Nuts → Rhode Island       64.69   177.20  30
+  8     Lot's O' Nuts → Nebraska           63.43   177.35  23
+  9     Wicked Choccy's → Ontario          63.14   177.63  30
+  10    Wicked Choccy's → Alabama          61.99   177.50  22
+
+  Louisiana appears twice in the top 10 (from both major factories),
+  confirming it as a consistently high-performing delivery destination.
+
+6.2 Bottom 10 Least Efficient Routes
+  Rank  Route                              Score   Avg LT  Orders
+  ────  ─────────────────────────────────  ──────  ──────  ──────
+  87    Wicked Choccy's → Quebec           23.10   178.67  24
+  88    Wicked Choccy's → Indiana          22.94   178.56  54
+  89    Wicked Choccy's → Delaware         22.78   178.55  49
+  90    Wicked Choccy's → Oklahoma         22.20   178.28  25
+  91    Wicked Choccy's → Nevada           20.27   178.42  12
+  92    Lot's O' Nuts → Arkansas           19.97   178.29  31
+  93    Lot's O' Nuts → Nevada             17.41   178.50  24
+  94    Lot's O' Nuts → New Mexico         17.22   178.83  18
+  95    Wicked Choccy's → Minnesota        16.78   178.47  45
+  96    Lot's O' Nuts → Oklahoma           14.07   178.56  41
+
+  Nevada appears in both the most delayed routes AND least efficient
+  routes from both factories — a critical geographic bottleneck.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. SHIP MODE PERFORMANCE ANALYSIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Ship Mode       Delay Rate    Key Insight
+  ──────────────  ────────────  ───────────────────────────────────────────
+  First Class     0.00%         Zero delays — most reliable mode
+  Same Day        0.00%         Zero delays — fastest mode
+  Second Class    0.35%         Near perfect performance
+  Standard Class  30.34%        Critical — source of ALL delays
+
+  This is the single most actionable finding in the entire analysis.
+  100% of delayed shipments originate from Standard Class shipping.
+  The overall network delay rate of 18.29% is entirely attributable
+  to Standard Class performance failure.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. GEOGRAPHIC BOTTLENECK ANALYSIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+8.1 Top 10 Slowest States
+  State                     Avg Lead Time   Orders   Performance
+  ────────────────────────  ─────────────   ──────   ───────────
+  Newfoundland and Labrador  181.67 days     6        Slow
+  District of Columbia       179.50 days     10       Slow
+  Maine                      179.00 days     8        Slow
+  Saskatchewan               179.00 days     2        Slow
+  Wyoming                    179.00 days     1        Slow
+  Prince Edward Island       178.80 days     10       Slow
+  Alberta                    178.77 days     26       Slow
+  South Dakota               178.58 days     12       Slow
+  New Mexico                 178.54 days     37       Slow
+  Minnesota                  178.53 days     89       Slow
+
+  Minnesota is the most critical bottleneck — 89 orders with slow
+  performance represents significant operational and revenue risk.
+
+8.2 Top 10 Fastest States
+  State           Avg Lead Time   Orders   Performance
+  ──────────────  ─────────────   ──────   ───────────
+  North Dakota    176.86 days     7        Fast
+  West Virginia   177.00 days     4        Fast
+  Louisiana       177.14 days     42       Fast
+  Rhode Island    177.29 days     56       Fast
+  Manitoba        177.33 days     12       Fast
+  Nova Scotia     177.33 days     6        Fast
+  Ontario         177.40 days     58       Fast
+  Ohio            177.47 days     469      Fast
+  Nebraska        177.55 days     38       Fast
+  Vermont         177.55 days     11       Fast
+
+  Ohio stands out as the most important fast state — 469 orders with
+  consistently fast delivery. This is Nassau Candy's logistics benchmark.
+
+8.3 Performance Classification
+  Category   States   Insight
+  ─────────  ───────  ─────────────────────────────────────
+  Fast       15       Benchmark states to replicate
+  Average    33       Stable — monitor for degradation
+  Slow       11       Priority states for intervention
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. DELAY FREQUENCY ANALYSIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+9.1 Overall Delay Statistics
+  Total Orders         : 10,194
+  Delayed Orders       : 1,864
+  On-Time Orders       : 8,330
+  Overall Delay Rate   : 18.29%
+  Delay Threshold      : 179 days (75th percentile)
+
+9.2 Top 10 Most Delay-Prone Routes
+  Route                          Total Orders  Delayed  Delay Rate
+  ─────────────────────────────  ────────────  ───────  ──────────
+  Lot's O' Nuts → Nevada         24            10       41.67%
+  Wicked Choccy's → Minnesota    45            16       35.56%
+  Wicked Choccy's → Oregon       43            15       34.88%
+  Lot's O' Nuts → Oklahoma       41            14       34.15%
+  Wicked Choccy's → Michigan     100           34       34.00%
+  Wicked Choccy's → Delaware     49            16       32.65%
+  Lot's O' Nuts → Arkansas       31            10       32.26%
+  Wicked Choccy's → Oklahoma     25            8        32.00%
+  Lot's O' Nuts → Oregon         77            23       29.87%
+  Lot's O' Nuts → Alabama        34            10       29.41%
+
+9.3 Zero-Delay Routes (Benchmark)
+  The following routes achieved 0% delay rate:
+  • Lot's O' Nuts → Nebraska
+  • Lot's O' Nuts → New Hampshire
+  • Lot's O' Nuts → Ontario
+  • Lot's O' Nuts → Alberta
+  • Lot's O' Nuts → British Columbia
+  • Wicked Choccy's → Louisiana
+  • Wicked Choccy's → Ontario
+  • Wicked Choccy's → Manitoba
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. KEY FINDINGS SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Finding 1 — Standard Class is the Root Cause of All Delays
+  Standard Class shipping has a 30.34% delay rate and is responsible
+  for 100% of the network's 1,864 delayed shipments. First Class,
+  Same Day, and Second Class modes are virtually delay-free.
+
+Finding 2 — Nevada is a Critical Multi-Factory Bottleneck
+  Nevada appears as a problem state for both Lot's O' Nuts (41.67%
+  delay rate) and Wicked Choccy's (ranked 91st in efficiency). This
+  suggests a carrier or infrastructure issue specific to Nevada.
+
+Finding 3 — Chocolate Dominance Creates Business Risk
+  92.9% of revenue comes from Chocolate products. Sugar division
+  generates only 0.3% despite having the most product variety.
+  This concentration creates significant revenue vulnerability.
+
+Finding 4 — Ohio is the Logistics Success Story
+  With 469 orders and consistently fast delivery, Ohio represents
+  Nassau Candy's most successful high-volume route. Its logistics
+  model should be studied and replicated.
+
+Finding 5 — Louisiana is the Most Efficient Delivery Destination
+  Louisiana appears multiple times in the top efficient routes
+  from both factories, with 0% delay rate from Wicked Choccy's.
+
+Finding 6 — Pacific and Atlantic Regions Drive the Business
+  61.2% of all orders come from Pacific and Atlantic regions.
+  California alone accounts for nearly 20% of total orders.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+11. RECOMMENDATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Recommendation 1 — Immediate: Audit Standard Class Carrier
+  Priority : CRITICAL
+  Action   : Conduct immediate audit of Standard Class shipping
+             carrier contracts and performance SLAs. Standard Class
+             accounts for 100% of all delays at a 30.34% delay rate.
+             Consider renegotiating contracts or switching providers
+             for high-volume routes.
+
+Recommendation 2 — Short Term: Address Nevada Bottleneck
+  Priority : HIGH
+  Action   : Investigate logistics infrastructure in Nevada. Both
+             major factories show poor performance to Nevada. Consider
+             using a regional distribution center or alternative
+             carrier for Nevada-bound shipments.
+
+Recommendation 3 — Short Term: Upgrade Critical Routes to Second Class
+  Priority : HIGH
+  Action   : For the top 10 most delay-prone routes, evaluate the
+             cost-benefit of upgrading from Standard Class to Second
+             Class shipping. Second Class has only 0.35% delay rate
+             vs Standard Class at 30.34%.
+
+Recommendation 4 — Medium Term: Replicate Ohio Logistics Model
+  Priority : MEDIUM
+  Action   : Study the carrier partnerships, routing, and fulfillment
+             processes used for Ohio deliveries. With 469 orders and
+             fast consistent delivery, Ohio's model should be
+             replicated for other high-volume states.
+
+Recommendation 5 — Medium Term: Diversify Revenue Beyond Chocolate
+  Priority : MEDIUM
+  Action   : Sugar division generates only 0.3% of revenue despite
+             having the most products. Evaluate pricing, marketing,
+             and distribution strategy for Sugar products to reduce
+             the 92.9% revenue concentration in Chocolate.
+
+Recommendation 6 — Long Term: Build Regional Distribution Centers
+  Priority : STRATEGIC
+  Action   : Given the geographic bottlenecks in remote states
+             (Newfoundland, Wyoming, Saskatchewan), consider
+             establishing regional distribution hubs to reduce
+             last-mile delivery times and improve reliability.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+12. CONCLUSION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+This analysis successfully transforms Nassau Candy Distributor's raw order
+and shipment data into actionable route-level operational intelligence.
+
+The most critical finding — that Standard Class shipping is solely
+responsible for all network delays — provides an immediate, high-impact
+action point that can be addressed without any infrastructure investment.
+
+By implementing the recommendations in this report, Nassau Candy Distributor
+can realistically target:
+  • Reducing overall delay rate from 18.29% to below 10%
+  • Eliminating bottlenecks in Nevada, Minnesota, and Oklahoma
+  • Building a data-driven logistics decision framework
+  • Improving customer satisfaction through more reliable delivery
+
+The Streamlit dashboard developed alongside this analysis provides the
+logistics team with ongoing, real-time visibility into route performance,
+enabling proactive rather than reactive decision-making going forward.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                          END OF REPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
